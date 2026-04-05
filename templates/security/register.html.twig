@@ -1,0 +1,223 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ImmoConnect | Inscription{% endblock %}
+
+{% set show_nav = false %}
+{% set show_footer = false %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            background:
+                radial-gradient(circle at top left, rgba(13, 110, 253, .10), transparent 30%),
+                linear-gradient(135deg, #f8fbff 0%, #eef4ff 100%);
+        }
+
+        .auth-left,
+        .auth-right {
+            min-height: 100vh;
+        }
+
+        .auth-left {
+            background: rgba(255, 255, 255, .88);
+            backdrop-filter: blur(14px);
+        }
+
+        .auth-shell {
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .auth-brand {
+            color: #0b1736;
+            letter-spacing: -.03em;
+        }
+
+        .auth-kicker {
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            font-size: .72rem;
+            font-weight: 800;
+            color: #0d6efd;
+        }
+
+        .auth-title {
+            font-size: clamp(1.6rem, 2.45vw, 2.35rem);
+            line-height: 1;
+            letter-spacing: -.05em;
+        }
+
+        .auth-copy {
+            color: #6b7280;
+            font-size: .92rem;
+        }
+
+        .auth-card {
+            border: 1px solid rgba(148, 163, 184, .18);
+            border-radius: 1.5rem;
+            box-shadow: 0 1rem 2.5rem rgba(15, 23, 42, .08);
+            background: rgba(255, 255, 255, .92);
+        }
+
+        .auth-input,
+        .auth-select {
+            border-radius: .9rem;
+            padding: .68rem .9rem;
+            border-color: #dbe3f0;
+        }
+
+        .auth-input:focus,
+        .auth-select:focus {
+            border-color: #0d6efd;
+            box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .14);
+        }
+
+        .auth-btn {
+            border-radius: .9rem;
+            padding: .78rem 1rem;
+            font-weight: 800;
+            box-shadow: 0 .6rem 1.2rem rgba(13, 110, 253, .18);
+        }
+
+        .auth-right {
+            position: relative;
+            background:
+                linear-gradient(180deg, rgba(13, 110, 253, .92), rgba(11, 23, 54, .96)),
+                radial-gradient(circle at top right, rgba(255, 255, 255, .20), transparent 35%);
+        }
+
+        .auth-right::after {
+            content: "";
+            position: absolute;
+            inset: auto 5% 0 auto;
+            width: min(72%, 560px);
+            height: 66%;
+            background: url('https://images.unsplash.com/photo-1545239351-1141bd82e8a6?auto=format&fit=crop&w=1100&q=80') center bottom / contain no-repeat;
+            pointer-events: none;
+        }
+
+        .quote-box {
+            max-width: 33rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-box blockquote {
+            font-size: clamp(1.45rem, 2.2vw, 2.2rem);
+            line-height: 1.02;
+            letter-spacing: -.05em;
+        }
+
+        .quote-box p {
+            font-size: .95rem;
+            color: rgba(17, 24, 39, .78);
+        }
+
+        @media (max-width: 991.98px) {
+            .auth-page,
+            .auth-left,
+            .auth-right {
+                min-height: auto;
+            }
+
+            .auth-right {
+                display: none !important;
+            }
+
+            .auth-left {
+                min-height: 100vh;
+            }
+
+            .auth-shell {
+                max-width: 100%;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="container-fluid auth-page">
+        <div class="row g-0 h-100">
+            <div class="col-lg-6 d-flex auth-left">
+                <div class="w-100 d-flex flex-column px-4 px-xl-4 py-3">
+                    <div class="mb-2">
+                        <a href="{{ path('app_home') }}" class="text-decoration-none auth-brand fw-bold fs-2 d-inline-flex align-items-center gap-3">
+                            <span class="navbar-brand-mark"><i class="bi bi-house-door-fill"></i></span>
+                            <span>ImmoConnect</span>
+                        </a>
+                    </div>
+
+                    <div class="flex-grow-1 d-flex align-items-center">
+                        <div class="auth-shell mx-auto">
+                            <div class="mb-2">
+                                <div class="auth-kicker mb-2">Inscription</div>
+                                <h1 class="auth-title fw-bold mb-2">Creez votre compte et publiez plus vite.</h1>
+                                <p class="auth-copy mb-0">Un parcours simple pour proprietaires, acheteurs, locataires et agences immobilières.</p>
+                            </div>
+
+                            <div class="auth-card p-3">
+                                <form method="post" class="row g-2">
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small mb-1">Nom</label>
+                                        <input type="text" class="form-control auth-input" name="name" placeholder="Votre nom">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small mb-1">Prenoms</label>
+                                        <input type="text" class="form-control auth-input" name="first_name" placeholder="Vos prenoms">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small mb-1">Email</label>
+                                        <input type="email" class="form-control auth-input" name="email" placeholder="vous@email.com">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label fw-semibold small mb-1">Numero</label>
+                                        <input type="text" class="form-control auth-input" name="phone" placeholder="+225 ...">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold small mb-1">Mot de passe</label>
+                                        <input type="password" class="form-control auth-input" name="password" placeholder="Choisissez un mot de passe">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label fw-semibold small mb-1">Profil principal</label>
+                                        <select class="form-select auth-select" name="role">
+                                            <option>Locataire</option>
+                                            <option>Proprietaire</option>
+                                            <option>Acheteur</option>
+                                            <option>Agence immobiliere</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12">
+                                        <div class="form-check small">
+                                            <input class="form-check-input" type="checkbox" id="terms" required>
+                                            <label class="form-check-label" for="terms">J accepte les conditions d utilisation et la politique de confidentialite.</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 d-grid">
+                                        <button class="btn btn-primary auth-btn">Creer mon compte</button>
+                                    </div>
+                                </form>
+
+                                <div class="text-center text-secondary small mt-2">
+                                    Deja membre ?
+                                    <a href="{{ path('app_login') }}" class="text-decoration-none fw-semibold">Se connecter</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6 d-none d-lg-flex auth-right align-items-center">
+                <div class="quote-box px-4 px-xl-5 ms-2">
+                    <div class="auth-kicker text-white mb-2">Plateforme immo</div>
+                    <blockquote class="fw-bold text-white mb-2">
+                        "Publiez, louez ou achetez avec une interface plus claire, plus rapide et mieux guidee."
+                    </blockquote>
+                    <p class="mb-0 fw-semibold text-white-50">ImmoConnect simplifie la mise en relation entre proprietaires, locataires et agences.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

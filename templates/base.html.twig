@@ -1,23 +1,246 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        {% block stylesheets %}
-        {% endblock %}
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}ImmoConnect{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22><path fill=%22%230d6efd%22 d=%22M8 28 32 8l24 20v24a4 4 0 0 1-4 4H12a4 4 0 0 1-4-4Z%22/><path fill=%22white%22 d=%22M24 56V36h16v20z%22/></svg>">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+        <style>
+            :root {
+                --im-primary: #0d6efd;
+                --im-dark: #0b1736;
+                --im-soft: #eef4ff;
+            }
 
+            body {
+                font-family: 'Manrope', sans-serif;
+                background: #f7f9fc;
+                color: #1f2937;
+            }
+
+            .navbar-brand-mark {
+                width: 2.5rem;
+                height: 2.5rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 1rem;
+                background: linear-gradient(135deg, var(--im-primary), #45a3ff);
+                color: #fff;
+            }
+
+            .hero-surface {
+                background:
+                    linear-gradient(135deg, rgba(11, 23, 54, 0.93), rgba(13, 110, 253, 0.72)),
+                    url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1600&q=80') center/cover;
+            }
+
+            .section-soft {
+                background: linear-gradient(180deg, #f7f9fc 0%, #eef4ff 100%);
+            }
+
+            .rounded-4 {
+                border-radius: 1.5rem !important;
+            }
+
+            .rounded-5 {
+                border-radius: 2rem !important;
+            }
+
+            .card-lift,
+            .hover-rise {
+                transition: transform .25s ease, box-shadow .25s ease;
+            }
+
+            .card-lift:hover,
+            .hover-rise:hover {
+                transform: translateY(-6px);
+                box-shadow: 0 1rem 2.5rem rgba(15, 23, 42, .12) !important;
+            }
+
+            .metric-card {
+                background: radial-gradient(circle at top left, rgba(13, 110, 253, 0.12), transparent 45%), #fff;
+            }
+
+            .glass-panel {
+                background: rgba(255, 255, 255, 0.92);
+                backdrop-filter: blur(12px);
+            }
+
+            .property-hero-image {
+                min-height: 420px;
+                object-fit: cover;
+            }
+
+            .avatar-circle {
+                width: 3rem;
+                height: 3rem;
+                border-radius: 50%;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                background: var(--im-soft);
+                color: var(--im-primary);
+                font-weight: 800;
+            }
+
+            .flash-stack {
+                position: fixed;
+                top: 1.25rem;
+                left: 50%;
+                z-index: 1085;
+                transform: translateX(-50%);
+                width: min(92vw, 980px);
+                display: grid;
+                gap: .85rem;
+                pointer-events: none;
+            }
+
+            .flash-stack .alert {
+                pointer-events: auto;
+            }
+
+            .flash-toast {
+                opacity: 0;
+                transform: translateY(-20px) scale(.98);
+                transition: opacity .28s ease, transform .28s ease;
+                box-shadow: 0 1.2rem 2.5rem rgba(15, 23, 42, .16) !important;
+            }
+
+            .flash-toast.is-visible {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            .flash-toast.is-hiding {
+                opacity: 0;
+                transform: translateY(-18px) scale(.98);
+            }
+        </style>
+        {% block stylesheets %}{% endblock %}
         {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+            <script type="module" src="{{ asset('app.js') }}"></script>
         {% endblock %}
 
         {% set frankenphpHotReload = app.request.server.get('FRANKENPHP_HOT_RELOAD') %}
         {% if frankenphpHotReload %}
-        <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
-        <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
-        <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
+            <meta name="frankenphp-hot-reload:url" content="{{ frankenphpHotReload }}">
+            <script src="https://cdn.jsdelivr.net/npm/idiomorph"></script>
+            <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
         {% endif %}
     </head>
     <body>
+        {% set show_nav = show_nav is defined ? show_nav : true %}
+        {% set show_footer = show_footer is defined ? show_footer : true %}
+        {% set current_user = app.session.get('immo_user') %}
+        {% set publisher_roles = ['ROLE_OWNER', 'ROLE_AGENCY', 'ROLE_ADMIN', 'ROLE_SUPER_ADMIN'] %}
+        {% set current_roles = current_user and current_user.roles is defined and current_user.roles is iterable ? current_user.roles : [] %}
+        {% set can_publish = current_roles|filter(role => role in publisher_roles)|length > 0 %}
+
+        {% if show_nav %}
+            <nav class="navbar navbar-expand-lg bg-white border-bottom sticky-top shadow-sm">
+                <div class="container py-2">
+                    <a class="navbar-brand d-flex align-items-center gap-3 fw-bold text-dark" href="{{ path('app_home') }}">
+                        <span class="navbar-brand-mark"><i class="bi bi-house-door-fill"></i></span>
+                        <span>ImmoConnect</span>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Afficher le menu">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="mainNavbar">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-2">
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_home') }}">Accueil</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_property_index') }}">Proprietes</a></li>
+                            {% if current_user %}
+                                {% if can_publish %}
+                                    <li class="nav-item"><a class="nav-link" href="{{ path('app_owner_dashboard') }}">Mon espace</a></li>
+                                {% endif %}
+                                <li class="nav-item">
+                                    <span class="nav-link text-primary fw-semibold">{{ current_user.name }}</span>
+                                </li>
+                                <li class="nav-item">
+                                    <form method="post" action="{{ path('app_logout') }}" class="d-inline">
+                                        <button type="submit" class="btn btn-link nav-link">Deconnexion</button>
+                                    </form>
+                                </li>
+                            {% else %}
+                                <li class="nav-item"><a class="nav-link" href="{{ path('app_login') }}">Connexion</a></li>
+                                <li class="nav-item"><a class="nav-link" href="{{ path('app_register') }}">Inscription</a></li>
+                            {% endif %}
+                            {% if not current_user or can_publish %}
+                                <li class="nav-item ms-lg-2">
+                                    <a class="btn btn-primary rounded-pill px-4" href="{% if current_user %}{{ path('app_owner_publish') }}{% else %}{{ path('app_login', {redirect_to: path('app_owner_publish')}) }}{% endif %}">Publier une annonce</a>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        {% endif %}
+
+        {% set flash_messages = app.flashes %}
+        {% if flash_messages is not empty %}
+            <div class="flash-stack">
+                {% for label, messages in flash_messages %}
+                    {% for message in messages %}
+                        <div
+                            class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible rounded-4 border-0 flash-toast"
+                            role="alert"
+                            {{ stimulus_controller('flash', { delay: 10000 }) }}
+                        >
+                            {{ message }}
+                            <button type="button" class="btn-close" aria-label="Fermer" data-action="click->flash#close"></button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+        {% endif %}
+
         {% block body %}{% endblock %}
+
+        {% if show_footer %}
+            <footer class="bg-dark text-white mt-5">
+                <div class="container py-5">
+                    <div class="row g-4">
+                        <div class="col-lg-4">
+                            <h5 class="fw-bold mb-3">ImmoConnect</h5>
+                            <p class="text-white-50 mb-0">
+                                Une plateforme immobiliere moderne pour acheter, louer, publier et gerer vos biens avec une experience simple et rassurante.
+                            </p>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <h6 class="text-uppercase small fw-bold text-white-50 mb-3">Navigation</h6>
+                            <div class="d-grid gap-2">
+                                <a class="link-light link-underline-opacity-0" href="{{ path('app_home') }}">Accueil</a>
+                                <a class="link-light link-underline-opacity-0" href="{{ path('app_property_index') }}">Catalogue</a>
+                                {% if can_publish %}
+                                    <a class="link-light link-underline-opacity-0" href="{{ path('app_owner_dashboard') }}">Dashboard proprietaire</a>
+                                {% endif %}
+                                <a class="link-light link-underline-opacity-0" href="{{ path('app_login') }}">Connexion</a>
+                            </div>
+                        </div>
+                        <div class="col-sm-6 col-lg-4">
+                            <h6 class="text-uppercase small fw-bold text-white-50 mb-3">Services</h6>
+                            <div class="d-grid gap-2 text-white-50">
+                                <span>Recherche dynamique de biens</span>
+                                <span>Visites a distance</span>
+                                <span>Accompagnement juridique</span>
+                                <span>Paiement et contrats de location</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border-top border-secondary mt-4 pt-4 text-white-50 small d-flex flex-column flex-md-row justify-content-between gap-2">
+                        <span>ImmoConnect {{ "now"|date("Y") }}. Tous droits reserves.</span>
+                    </div>
+                </div>
+            </footer>
+        {% endif %}
     </body>
 </html>

@@ -4,6 +4,12 @@ framework:
 
     # Note that the session will be started ONLY if you read or write from it.
     session: true
+    form:
+        csrf_protection:
+            field_attr: []
+    asset_mapper:
+        paths:
+            - assets/
 
     #esi: true
     #fragments: true

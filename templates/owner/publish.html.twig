@@ -1,0 +1,271 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ImmoConnect | Publier une annonce{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .publish-hero {
+            background:
+                radial-gradient(circle at top left, rgba(69, 163, 255, .28), transparent 28rem),
+                linear-gradient(135deg, #08152f 0%, #0d3a7a 52%, #0d6efd 100%);
+        }
+
+        .publish-shell {
+            margin-top: -3.75rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .publish-form-card {
+            background: rgba(255, 255, 255, .96);
+            backdrop-filter: blur(12px);
+        }
+
+        .publish-section-title {
+            font-size: .82rem;
+            text-transform: uppercase;
+            letter-spacing: .12em;
+            font-weight: 800;
+            color: #0d6efd;
+        }
+
+        .publish-input,
+        .publish-select,
+        .publish-textarea {
+            border-radius: 1.1rem;
+            border: 1px solid rgba(148, 163, 184, .35);
+            padding: .95rem 1rem;
+            box-shadow: none;
+        }
+
+        .publish-input:focus,
+        .publish-select:focus,
+        .publish-textarea:focus {
+            border-color: rgba(13, 110, 253, .6);
+            box-shadow: 0 0 0 .25rem rgba(13, 110, 253, .12);
+        }
+
+        .publish-choice {
+            border: 1px solid rgba(148, 163, 184, .28);
+            border-radius: 1.25rem;
+            padding: 1rem 1.1rem;
+            background: #fff;
+            height: 100%;
+        }
+
+        .publish-side-card {
+            border: 0;
+            border-radius: 1.75rem;
+            box-shadow: 0 1.2rem 3rem rgba(15, 23, 42, .08);
+        }
+
+        .publish-stat {
+            border-radius: 1.25rem;
+            background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+        }
+
+        .publish-hero-title {
+            font-size: clamp(2.5rem, 5vw, 4.8rem);
+            line-height: 1.02;
+            letter-spacing: -.05em;
+            max-width: 12ch;
+        }
+
+        .publish-hero-copy {
+            max-width: 54rem;
+        }
+
+        .publish-summary-card {
+            max-width: 31rem;
+            margin-left: auto;
+        }
+
+        .publish-actions {
+            padding-top: 1rem;
+            border-top: 1px solid rgba(148, 163, 184, .18);
+        }
+
+        .publish-actions .btn {
+            min-width: 170px;
+            white-space: nowrap;
+        }
+
+        .publish-upload {
+            border: 1px dashed rgba(13, 110, 253, .35);
+            background: linear-gradient(180deg, #f8fbff 0%, #eef4ff 100%);
+            border-radius: 1.25rem;
+            padding: 1rem;
+        }
+
+        @media (max-width: 991.98px) {
+            .publish-shell {
+                margin-top: -1.5rem;
+            }
+
+            .publish-hero-title,
+            .publish-hero-copy,
+            .publish-summary-card {
+                max-width: none;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="publish-hero text-white pt-5 pb-5">
+        <div class="container py-4 py-lg-5">
+            <div class="row align-items-center g-4 g-xl-5">
+                <div class="col-lg-8">
+                    <span class="badge rounded-pill bg-white text-primary px-3 py-2 fw-semibold mb-3">Publication d'annonce</span>
+                    <h1 class="publish-hero-title fw-bold mb-3">Mettez votre bien en ligne avec une presentation claire et vendeuse</h1>
+                    <p class="lead text-white-50 mb-0 publish-hero-copy">Renseignez les informations essentielles du bien, la localisation, le mode de publication et les images du bien. Cette version enregistre maintenant l'annonce en base.</p>
+                </div>
+                <div class="col-lg-4">
+                    <div class="glass-panel rounded-5 p-4 text-dark shadow-lg publish-summary-card">
+                        <div class="small text-uppercase text-primary fw-bold mb-2">Conseil rapide</div>
+                        <div class="fw-bold fs-5 mb-2">Une bonne annonce se loue ou se vend plus vite.</div>
+                        <p class="text-secondary mb-0">Ajoutez un titre precis, un prix realiste, une vraie localisation et au moins une image nette du bien.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="section-soft pb-5">
+        <div class="container publish-shell">
+            <div class="row g-4 align-items-start">
+                <div class="col-xl-8">
+                    <div class="card publish-form-card border-0 shadow-lg rounded-5 overflow-hidden">
+                        <div class="card-body p-4 p-lg-5">
+                            <form method="post" enctype="multipart/form-data" class="row g-4">
+                                <input type="hidden" name="_token" value="{{ csrf_token('publish_property') }}">
+
+                                <div class="col-12">
+                                    <div class="publish-section-title mb-3">Informations principales</div>
+                                </div>
+
+                                <div class="col-md-8">
+                                    <label class="form-label fw-semibold">Titre de l'annonce</label>
+                                    <input type="text" class="form-control publish-input" name="title" value="{{ form_data.title }}" placeholder="Ex: Villa moderne 5 pieces avec piscine a Cocody">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Type de bien</label>
+                                    <select class="form-select publish-select" name="category">
+                                        <option value="">Choisir</option>
+                                        {% for category in categories %}
+                                            <option value="{{ category.title }}" {% if form_data.category == category.title %}selected{% endif %}>{{ category.title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Mode</label>
+                                    <select class="form-select publish-select" name="operation">
+                                        {% for operation in operations %}
+                                            <option value="{{ operation }}" {% if form_data.operation == operation %}selected{% endif %}>{{ operation }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Prix</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control publish-input" name="price" value="{{ form_data.price }}" placeholder="Montant">
+                                        <span class="input-group-text bg-white border-start-0 rounded-end-4">FCFA</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Surface</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control publish-input" name="surface" value="{{ form_data.surface }}" placeholder="Ex: 160">
+                                        <span class="input-group-text bg-white border-start-0 rounded-end-4">m2</span>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Nombre de pieces</label>
+                                    <input type="number" class="form-control publish-input" name="rooms" value="{{ form_data.rooms }}" placeholder="Ex: 4">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Ville / commune</label>
+                                    <input type="text" class="form-control publish-input" name="city" value="{{ form_data.city }}" placeholder="Ex: Cocody, Abidjan">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label fw-semibold">Quartier / zone</label>
+                                    <input type="text" class="form-control publish-input" name="location" value="{{ form_data.location }}" placeholder="Ex: Riviera Golf">
+                                </div>
+
+                                
+
+                                <div class="col-12 pt-2">
+                                    <div class="publish-section-title mb-3"></div>
+                                    <label class="form-label fw-semibold">Description du bien</label>
+                                    <textarea class="form-control publish-textarea" rows="6" name="description" placeholder="Decrivez clairement le bien, ses points forts, l'etat general, les commodites proches et les conditions importantes.">{{ form_data.description }}</textarea>
+                                </div>
+
+                                <div class="col-12 pt-2">
+                                    <div class="publish-section-title mb-3">Images du bien</div>
+                                    <div class="row g-3">
+                                        <div class="col-md-6">
+                                            <div class="publish-upload h-100">
+                                                <label class="form-label fw-semibold">Image principale</label>
+                                                <input type="file" class="form-control publish-input" name="main_image" accept="image/*">
+                                                <div class="form-text">Choisissez la photo principale de l'annonce.</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="publish-upload h-100">
+                                                <label class="form-label fw-semibold">Galerie photos</label>
+                                                <input type="file" class="form-control publish-input" name="gallery_images[]" accept="image/*" multiple>
+                                                <div class="form-text">Vous pouvez ajouter plusieurs images supplementaires.</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-12 publish-actions d-flex flex-column flex-lg-row gap-3 justify-content-between align-items-lg-center">
+                                    <p class="text-secondary mb-0">La publication reste reservee aux proprietaires, agences et administrateurs connectes.</p>
+                                    <div class="d-flex flex-column flex-sm-row gap-3">
+                                        <a href="{{ path('app_owner_dashboard') }}" class="btn btn-light rounded-pill px-4">Retour</a>
+                                        <button class="btn btn-primary btn-lg rounded-pill px-4" type="submit">Publier l'annonce</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-xl-4">
+                    <div class="publish-side-card card mb-4">
+                        <div class="card-body p-4 p-lg-4">
+                            <div class="publish-section-title mb-3">Checklist</div>
+                            <div class="d-grid gap-3">
+                                <div class="d-flex gap-3">
+                                    <span class="avatar-circle flex-shrink-0"><i class="bi bi-pencil-square"></i></span>
+                                    <div>
+                                        <div class="fw-semibold">Titre precis</div>
+                                        <div class="text-secondary small">Le titre doit expliquer en une ligne le type et l'avantage principal du bien.</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-3">
+                                    <span class="avatar-circle flex-shrink-0"><i class="bi bi-geo-alt"></i></span>
+                                    <div>
+                                        <div class="fw-semibold">Localisation complete</div>
+                                        <div class="text-secondary small">Ville, commune et quartier augmentent fortement la confiance des visiteurs.</div>
+                                    </div>
+                                </div>
+                                <div class="d-flex gap-3">
+                                    <span class="avatar-circle flex-shrink-0"><i class="bi bi-images"></i></span>
+                                    <div>
+                                        <div class="fw-semibold">Images nettes</div>
+                                        <div class="text-secondary small">Ajoutez au moins une image propre du bien pour activer une annonce credible.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

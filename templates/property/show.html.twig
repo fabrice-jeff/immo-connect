@@ -1,0 +1,235 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}ImmoConnect | {{ property.title }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .hero-price {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: .25rem;
+            background: rgba(255, 255, 255, .08);
+            border: 1px solid rgba(255, 255, 255, .14);
+            border-radius: 1.5rem;
+            padding: 1rem 1.1rem;
+            min-width: 220px;
+        }
+
+        .hero-price-label {
+            font-size: .72rem;
+            letter-spacing: .14em;
+            text-transform: uppercase;
+            font-weight: 800;
+            color: rgba(255, 255, 255, .65);
+        }
+
+        .hero-price-value {
+            font-size: clamp(1.8rem, 2.7vw, 3rem);
+            line-height: .96;
+            letter-spacing: -.05em;
+            white-space: nowrap;
+        }
+
+        .hero-price-currency {
+            font-size: .95rem;
+            font-weight: 700;
+            letter-spacing: .08em;
+            color: rgba(255, 255, 255, .78);
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <section class="bg-dark text-white py-5">
+        <div class="container py-4">
+            <div class="row g-4 align-items-end">
+                <div class="col-lg-8">
+                    <nav class="small text-white-50 mb-3">
+                        <a class="link-light link-underline-opacity-0" href="{{ path('app_home') }}">Accueil</a>
+                        <span class="mx-2">/</span>
+                        <a class="link-light link-underline-opacity-0" href="{{ path('app_property_index') }}">Proprietes</a>
+                        <span class="mx-2">/</span>
+                        <span>{{ property.title }}</span>
+                    </nav>
+                    <span class="badge text-bg-primary rounded-pill px-3 py-2 mb-3">{{ property.operation }}</span>
+                    <h1 class="display-5 fw-bold mb-3">{{ property.title }}</h1>
+                    <p class="lead text-white-50 mb-0"><i class="bi bi-geo-alt me-2"></i>{{ property.location }}</p>
+                </div>
+                <div class="col-lg-4 text-lg-end">
+                    <div class="hero-price">
+                        <span class="hero-price-label">Prix</span>
+                        <span class="hero-price-value fw-bold">{{ property.price|number_format(0, ',', ' ') }}</span>
+                        <span class="hero-price-currency">FCFA</span>
+                    </div>
+                    <div class="text-white-50">{{ property.status }} - {{ property.category }}</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="py-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div id="propertyGallery" class="carousel slide mb-4 shadow-sm rounded-4 overflow-hidden">
+                        <div class="carousel-inner">
+                            {% for image in property.images %}
+                                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                                    <img src="{{ image }}" class="d-block w-100 property-hero-image" alt="{{ property.title }}">
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if property.images|length > 1 %}
+                            <button class="carousel-control-prev" type="button" data-bs-target="#propertyGallery" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Precedent</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#propertyGallery" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Suivant</span>
+                            </button>
+                        {% endif %}
+                    </div>
+
+                    <div class="row g-3 mb-4">
+                        <div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body"><div class="text-secondary small">Pieces</div><div class="h4 fw-bold mb-0">{{ property.rooms }}</div></div></div></div>
+                        <div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body"><div class="text-secondary small">Salles d eau</div><div class="h4 fw-bold mb-0">{{ property.bathrooms }}</div></div></div></div>
+                        <div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body"><div class="text-secondary small">Surface</div><div class="h4 fw-bold mb-0">{{ property.surface }} m2</div></div></div></div>
+                        <div class="col-sm-6 col-xl-3"><div class="card border-0 shadow-sm rounded-4 h-100"><div class="card-body"><div class="text-secondary small">Localisation</div><div class="h5 fw-bold mb-0">{{ property.location }}</div></div></div></div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <h2 class="h3 fw-bold mb-3">Description</h2>
+                            <p class="text-secondary mb-0">{{ property.description }}</p>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-body p-4 p-lg-5">
+                            <h2 class="h3 fw-bold mb-4">Equipements et services</h2>
+                            <div class="row g-3">
+                                {% for amenity in property.amenities %}
+                                    <div class="col-md-6">
+                                        <div class="d-flex align-items-center gap-3 bg-light rounded-4 p-3">
+                                            <span class="avatar-circle"><i class="bi bi-check2"></i></span>
+                                            <span class="fw-semibold">{{ amenity }}</span>
+                                        </div>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-4">
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 h-100">
+                                <div class="card-body p-4">
+                                    <h3 class="h5 fw-bold mb-3">Paiements supportes</h3>
+                                    <div class="d-flex flex-wrap gap-2">
+                                        {% for method in property.payment_methods %}
+                                            <span class="badge text-bg-light border rounded-pill px-3 py-2 text-dark">{{ method }}</span>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="card border-0 shadow-sm rounded-4 h-100">
+                                <div class="card-body p-4">
+                                    <h3 class="h5 fw-bold mb-3">Accompagnement juridique</h3>
+                                    <ul class="list-unstyled mb-0 d-grid gap-2">
+                                        {% for service in property.legal_services %}
+                                            <li><i class="bi bi-shield-check text-primary me-2"></i>{{ service }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="card border-0 shadow-sm rounded-4 mb-4">
+                        <div class="card-body p-4 p-lg-4">
+                            <div class="rounded-4 p-4 text-white mb-4" style="background: linear-gradient(135deg, #0d6efd, #0b1736);">
+                                <div class="small text-uppercase fw-bold opacity-75 mb-2">Contact direct</div>
+                                <h2 class="h3 fw-bold mb-3">Contacter le proprietaire</h2>
+                                <p class="mb-0 text-white-50">Posez vos questions, demandez une visite ou lancez une prise de contact rapide.</p>
+                            </div>
+
+                            <div class="d-flex align-items-center gap-3 rounded-4 p-3 mb-4 border bg-light-subtle">
+                                <span class="avatar-circle bg-white shadow-sm">{{ property.owner.name|slice(0, 1)|upper }}</span>
+                                <div>
+                                    <div class="fw-bold fs-5">{{ property.owner.name }}</div>
+                                    <div class="text-secondary">{{ property.owner.phone }}</div>
+                                </div>
+                            </div>
+
+                            <form method="post" class="row g-3">
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold small text-uppercase text-secondary">Nom complet</label>
+                                    <input type="text" class="form-control rounded-4 py-3 border-0 shadow-sm" name="full_name" placeholder="Votre nom">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold small text-uppercase text-secondary">Email</label>
+                                    <input type="email" class="form-control rounded-4 py-3 border-0 shadow-sm" name="email" placeholder="vous@email.com">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold small text-uppercase text-secondary">Telephone</label>
+                                    <input type="text" class="form-control rounded-4 py-3 border-0 shadow-sm" name="phone" placeholder="+225 ...">
+                                </div>
+                                <div class="col-12">
+                                    <label class="form-label fw-semibold small text-uppercase text-secondary">Message</label>
+                                    <textarea class="form-control rounded-4 border-0 shadow-sm" rows="4" name="message" placeholder="Je souhaite une visite ou plus d informations sur ce bien."></textarea>
+                                </div>
+                                <div class="col-12 d-grid">
+                                    <button class="btn btn-primary rounded-4 py-3 fw-semibold">Envoyer la demande</button>
+                                </div>
+                            </form>
+
+                            <div class="mt-4 d-grid gap-2">
+                                <div class="d-flex align-items-center gap-2 rounded-4 bg-light p-3 small">
+                                    <i class="bi bi-envelope-fill text-primary"></i>
+                                    <span>{{ property.owner.email }}</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 rounded-4 bg-light p-3 small">
+                                    <i class="bi bi-camera-video-fill text-primary"></i>
+                                    <span>Visite a distance disponible sur rendez-vous</span>
+                                </div>
+                                <div class="d-flex align-items-center gap-2 rounded-4 bg-light p-3 small">
+                                    <i class="bi bi-chat-dots-fill text-primary"></i>
+                                    <span>Messagerie interne </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card border-0 shadow-sm rounded-4">
+                        <div class="card-body p-4">
+                            <h3 class="h4 fw-bold mb-4">Biens similaires</h3>
+                            <div class="d-grid gap-3">
+                                {% for item in related %}
+                                    <a href="{{ path('app_property_show', {id: item.id}) }}" class="text-decoration-none text-dark">
+                                        <div class="d-flex gap-3 bg-light rounded-4 p-3">
+                                            <img src="{{ item.images[0] }}" alt="{{ item.title }}" class="rounded-4" style="width: 86px; height: 86px; object-fit: cover;">
+                                            <div>
+                                                <div class="fw-bold">{{ item.title }}</div>
+                                                <div class="text-secondary small">{{ item.location }}</div>
+                                                <div class="text-primary fw-bold small mt-1">{{ item.price|number_format(0, ',', ' ') }} FCFA</div>
+                                            </div>
+                                        </div>
+                                    </a>
+                                {% else %}
+                                    <p class="text-secondary mb-0">Pas encore de bien similaire dans cette categorie.</p>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

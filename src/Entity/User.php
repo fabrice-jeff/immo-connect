@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Repository\UserRepository;
 use App\Utils\TraitClasses\EntityTimestampableTrait;
 use App\Utils\TraitClasses\EntityUserOperation;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -14,7 +16,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    use EntityTimestampableTrait;
+    use EntityTimestampableTrait {
+        EntityTimestampableTrait::__construct as private initializeTimestampable;
+    }
     use EntityUserOperation;
 
     #[ORM\Id]
@@ -48,6 +52,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column]
     private ?bool $isActive = null;
+
+    /**
+     * @var Collection<int, Property>
+     */
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Property::class)]
+    private Collection $properties;
+
+    public function __construct()
+    {
+        $this->initializeTimestampable();
+        $this->properties = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -168,6 +184,33 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Property>
+     */
+    public function getProperties(): Collection
+    {
+        return $this->properties;
+    }
+
+    public function addProperty(Property $property): static
+    {
+        if (!$this->properties->contains($property)) {
+            $this->properties->add($property);
+            $property->setOwner($this);
+        }
+
+        return $this;
+    }
+
+    public function removeProperty(Property $property): static
+    {
+        if ($this->properties->removeElement($property) && $property->getOwner() === $this) {
+            $property->setOwner(null);
+        }
 
         return $this;
     }

@@ -11,9 +11,8 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: PropertyRepository::class)]
 class Property
 {
-    
     use EntityTimestampableTrait;
-    use EntityUserOperation;    
+    use EntityUserOperation;
 
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -23,19 +22,25 @@ class Property
     #[ORM\Column(length: 255)]
     private ?string $title = null;
 
+    #[ORM\Column(length: 255)]
+    private ?string $location = null;
+
+    #[ORM\Column(length: 40)]
+    private ?string $operation = null;
+
     #[ORM\Column]
     private ?float $price = null;
 
     #[ORM\Column]
     private ?float $surface = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?bool $isAvailable = null;
 
     #[ORM\Column]
     private ?int $roomsNumber = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\ManyToOne(inversedBy: 'properties')]
     #[ORM\JoinColumn(nullable: false)]
     private ?User $owner = null;
 
@@ -59,6 +64,30 @@ class Property
     public function setTitle(string $title): static
     {
         $this->title = $title;
+
+        return $this;
+    }
+
+    public function getLocation(): ?string
+    {
+        return $this->location;
+    }
+
+    public function setLocation(string $location): static
+    {
+        $this->location = $location;
+
+        return $this;
+    }
+
+    public function getOperation(): ?string
+    {
+        return $this->operation;
+    }
+
+    public function setOperation(string $operation): static
+    {
+        $this->operation = $operation;
 
         return $this;
     }
@@ -116,7 +145,7 @@ class Property
         return $this->owner;
     }
 
-    public function setOwner(User $owner): static
+    public function setOwner(?User $owner): static
     {
         $this->owner = $owner;
 
@@ -146,5 +175,4 @@ class Property
 
         return $this;
     }
-
 }
